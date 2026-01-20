@@ -1,0 +1,3 @@
+[submodule "omnilingual-asr"]
+	path = omnilingual-asr
+	url = https://github.com/facebookresearch/omnilingual-asr.git

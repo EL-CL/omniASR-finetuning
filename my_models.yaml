@@ -1,0 +1,5 @@
+name: ipa_250506_260120
+model_family: wav2vec2_asr
+model_arch: 300m_v2
+checkpoint: file:///mnt/all_hdd/slow/data/王天恒/omniASR-finetuning/models/ipa_250506_260120.pt
+tokenizer_ref: omniASR_tokenizer_written_v2

@@ -1,0 +1,54 @@
+model:
+  name: "omniASR_CTC_1B_v2"
+
+dataset:
+  name: "ipa_250506"
+  train_split: "train"
+  valid_split: "dev"
+  storage_mode: "MIXTURE_PARQUET"
+  task_mode: "ASR"
+  mixture_parquet_storage_config:
+    dataset_summary_path: "../datasets/ipa_250506_stats.tsv"
+    beta_corpus: 0.5
+    beta_language: 0.5
+    fragment_loading:
+      cache: True
+  asr_task_config:
+     min_audio_len: 16000
+     max_audio_len: 200000
+     max_num_elements: 1600000
+     batch_shuffle_window: 1
+     normalize_audio: true
+     example_shuffle_window: 1
+
+tokenizer:
+  name: "omniASR_tokenizer_written_v2"
+
+optimizer:
+  config:
+    lr: 3e-05
+    weight_decay: 0.1
+
+lr_scheduler:
+  config:
+    start_lr_scale: 0.01
+    final_lr_scale: 0.01
+
+trainer:
+  data_parallelism: "fsdp"
+  fsdp:
+    version: "v2"
+    granularity: "layer"
+  freeze_encoder_for_n_steps: 7000
+  mixed_precision:
+    mode: "auto"
+    dtype: "torch.bfloat16"
+  grad_accumulation:
+    num_batches: 2
+
+regime:
+  num_steps: 30000
+  validate_after_n_steps: 0
+  validate_every_n_steps: 1000
+  checkpoint_every_n_steps: 1000
+  publish_metrics_every_n_steps: 200
