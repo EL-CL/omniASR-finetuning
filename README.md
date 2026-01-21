@@ -190,19 +190,22 @@ import torch
 ### 3.3 启动微调
 
 ```bash
+# 创建临时文件文件夹
+mkdir /mnt/all_ssd/tmp/torch
+
 # 需切到 omnilingual-asr/ 下执行
 cd omnilingual-asr
 
 # 单张显卡训练的配置
-TMPDIR=../tmp CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
+TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
 
 # 8 张显卡训练的配置
-TMPDIR=../tmp CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node=8 -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
+TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node=8 -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
 ```
 
 一些说明：
 
-- `TMPDIR`：fairseq2 训练过程中的临时文件默认存放在 `/tmp/tmpXXXXXXXX/`，但 `/tmp` 限定了文件夹不超过 192 MB，训练不久后临时文件就会达到这一限制，导致训练中断。现在手动指定之
+- `TMPDIR`：fairseq2 训练过程中的临时文件默认存放在 `/tmp/tmpXXXXXXXX/`，但 `/tmp` 限定了文件夹不超过 192 MB，训练不久后临时文件就会达到这一限制，导致训练中断。现在手动指定之。由于临时文件读写频繁，设在 `all_hdd` 负载太大，所以设在 `all_ssd`
 - `../ft_records`：指定输出的文件夹。微调（fine-tune，这里缩写为 `ft`）相关的各类文件会输出到 `../ft_records/ws_N.XXXXXXXX` 下，`N` 为显卡数量，`XXXXXXXX` 为根据当前 `.yaml` 配置生成的
 - 在命令前面还可以增加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 以进一步少许降低显存占用
 
