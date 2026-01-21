@@ -1,8 +1,8 @@
 import os
 import torch
 
-checkpoint_folder = 'ft_records/ipa_250506_260120/checkpoints/step_30000/model/pp_00/tp_00/'
-output_path = 'models/ipa_250506_260120.pt'
+checkpoint_folder = 'ft_records/ipa_250506_260120/checkpoints/step_29000/model/pp_00/tp_00/'
+output_path = 'ft_models/ipa_250506_260120_128x29000.pt'
 
 
 print('开始加载分片')
@@ -45,4 +45,4 @@ for k in key_occurrences:
         consolidated[k] = torch.cat(tensors, dim=0)
 print('合并完成')
 torch.save(consolidated, output_path)
-print(f'保存完成')
+print('保存完成')

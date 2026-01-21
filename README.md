@@ -197,7 +197,7 @@ mkdir /mnt/all_ssd/tmp/torch
 cd omnilingual-asr
 
 # 单张显卡训练的配置
-TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
+TMPDIR=/mnt/all_ssd/tmp/torch python -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
 
 # 8 张显卡训练的配置
 TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node=8 -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
@@ -233,7 +233,20 @@ TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --np
 
 ### 4.3 使用
 
-见 1.4 示例。
+见 1.4 示例。如果在 2.3 使用了 `char_substitution.tsv`，那么别忘了替换回来：
+
+```python
+char_substitution = {}
+with open(char_substitution_path, 'r', encoding='utf-8') as f:
+    for line in f:
+        char_old, char_new = line.strip('\n').split('\t')
+        char_substitution[char_new] = char_old
+
+# transcriptions = pipeline.transcribe(...)
+
+for t in transcriptions:
+    t = ''.join([char_substitution.get(c, c) for c in t])
+```
 
 ## 5. 用测试集评估模型
 
