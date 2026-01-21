@@ -152,6 +152,8 @@ fairseq2 的微调没有显式的 epoch 概念，我们可以根据 2.4 打印�
 - `checkpoint_every_n_steps`：每多少 steps 保存一次
 - `publish_metrics_every_n_steps`: 每多少 steps 打印一次状态。这 3 个参数根据实际训练的速度以及总的 `num_steps` 设置即可
 
+此外，如果需要在一开始时评估（例如训练模型中已有的语言），在 `regime` 下增加 `validate_at_start: true` 即可。
+
 #### 3.1.5 学习率相关参数
 
 - `optimizer` 下
@@ -164,6 +166,7 @@ fairseq2 的微调没有显式的 epoch 概念，我们可以根据 2.4 打印�
 #### 3.1.6 其他参数
 
 - `dataset_summary_path`：即 2.5 中生成的数据集统计文件
+- `score_metric`：错误率，提供 `"uer"`（单元错误率 unit error rate，即字符错误率）和 `"wer"`（词错误率 word error rate，词以空格为单位分隔）两种选择。默认的选择是 `"wer"`，但对于国际音标训练来说设为 `"uer"`
 
 ### 3.2 修复 Omnilingual ASR 代码
 
@@ -206,7 +209,7 @@ TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --np
 一些说明：
 
 - `TMPDIR`：fairseq2 训练过程中的临时文件默认存放在 `/tmp/tmpXXXXXXXX/`，但 `/tmp` 限定了文件夹不超过 192 MB，训练不久后临时文件就会达到这一限制，导致训练中断。现在手动指定之。由于临时文件读写频繁，设在 `all_hdd` 负载太大，所以设在 `all_ssd`
-- `../ft_records`：指定输出的文件夹。微调（fine-tune，这里缩写为 `ft`）相关的各类文件会输出到 `../ft_records/ws_N.XXXXXXXX` 下，`N` 为显卡数量，`XXXXXXXX` 为根据当前 `.yaml` 配置生成的
+- `../ft_records`：指定输出的文件夹。微调（fine-tune，这里缩写为 `ft`）相关的各类文件会输出到 `../ft_records/ws_N.XXXXXXXX` 下，`N` 为显卡数量，`XXXXXXXX` 为根据当前 `.yaml` 配置生成的。可以通过 `ls ft_records/ -l` 查看各 `ws_N.XXXXXXXX` 文件夹的修改时期，来判断哪一个 `ws_N.XXXXXXXX` 是当前训练所用的文件夹
 - 在命令前面还可以增加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 以进一步少许降低显存占用
 
 注意训练一开始时预估的所需时间不准确，因为第一阶段的训练比第二阶段快很多，这里预估的时间是根据第一阶段的速度预估的。
@@ -215,9 +218,13 @@ TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --np
 
 训练中断后，在 `.yaml` 配置文件保持不变、显卡数量不变的前提下，可以直接执行原命令，就会从上一个保存的 checkpoint 继续训练。
 
+### 3.5 观察错误率
+
+每次评估的单元错误率和词错误率以及其他参数保存在 `ft_records/ws_N.XXXXXXXX/metrics/valid.jsonl` 中。运行 `extract_scores.py` 可将两个错误率导出成 `.tsv`。
+
 ## 4. 使用微调后的模型
 
-微调过程中的 checkpoint 保存在 `ft_records/ws_N.XXXXXXXX/checkpoints/step_XXXX/model/pp_00/tp_00/`。可以通过 `ls ft_records/ -l` 查看各 `ws_N.XXXXXXXX` 文件夹的修改时期，以及查看 `checkpoints/` 下 `step_XXXX` 达到的数量，来判断哪一个 `ws_N.XXXXXXXX` 是所需的文件夹。为了方便后续识别，可将 `ws_N.XXXXXXXX` 改名为有意义的文件夹名（如果是训练中断未完成，之后还需继续训练的话，就不要改名）。
+微调过程中的 checkpoint 保存在 `ft_records/ws_N.XXXXXXXX/checkpoints/step_XXXX/model/pp_00/tp_00/`。为了方便后续识别，在训练完成后可将 `ws_N.XXXXXXXX` 改名为有意义的文件夹名（如果是训练中断未完成，之后还需继续训练的话，就不要改名）。
 
 ### 4.1 合并模型文件
 

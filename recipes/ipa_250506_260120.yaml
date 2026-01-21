@@ -50,5 +50,6 @@ regime:
   num_steps: 30000
   validate_after_n_steps: 0
   validate_every_n_steps: 1000
+  score_metric: uer
   checkpoint_every_n_steps: 1000
   publish_metrics_every_n_steps: 200
