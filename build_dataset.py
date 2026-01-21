@@ -24,6 +24,16 @@ def metadata_to_hf(paths, texts):
         'text': texts,
     })
 
+    # 只拆分成 train 和 dev 的情况
+    if test_size == 0:
+        train_dev = dataset.train_test_split(
+            dev_size, seed=seed)
+        return DatasetDict({
+            'train': train_dev['train'],
+            'dev': train_dev['test'],
+        })
+
+    # 拆分成 train、dev 和 test 的情况
     # 先拆分成 train+dev 和 test
     train_test = dataset.train_test_split(
         test_size, seed=seed)

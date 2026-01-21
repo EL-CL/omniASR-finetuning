@@ -90,7 +90,7 @@ Omnilingual ASR 的 tokenizer 以字符为 token，它已经很大（`omniASR_to
 运行 `build_dataset.py` 根据元数据构建音频数据集，按微调 Omnilingual ASR 所需的格式将数据集分为训练集（train）、验证集（validation，这里称作 dev，用于训练过程中的评估）和测试集（test，不参与训练，作为完全陌生的数据用于最终的模型的评估）三部分，并流式保存为分片（shard）文件。代码中需调整或注意的参数已经列在开头，其中：
 
 - `lang_id`：三位 ISO 639-3 代码 + 下划线 + 四位书写文字代号，[这里](https://github.com/facebookresearch/omnilingual-asr/blob/main/src/omnilingual_asr/models/wav2vec2_llama/lang_ids.py#L9)可浏览 Omnilingual ASR 全部 `lang_id`
-- `dev_size` 和 `test_size`：对于大规模数据集来说，验证集和测试集可各取总数据集的 1%；对于小规模数据集来说，可适当提高验证集的大小
+- `dev_size` 和 `test_size`：对于大规模数据集来说，验证集和测试集可各取总数据集的 1%；对于小规模数据集来说，可适当提高验证集的大小；如果确定不需要测试集（不需要最终评估），可以将 `test_size` 设为 0
 - `num_audios_per_shard`：每个分片包含的音频数量，可根据平均音频长度来调整。例如国际音标数据集 `ipa_250506` 多数音频为 12 s，即 12 s × 16000 Hz × 16 bit = 3072000 bit = 384000 B = 375 KB 大小，希望每个分片为 2 GB 左右，那么每个分配将包含 2 GB / 375 KB ≈ 6000 个文件
 
 运行开头会打印训练集、验证集和测试集的音频数量，训练集的音频数量在下面 3.1.3 的训练参数计算中会用到。
