@@ -2,6 +2,8 @@
 
 使用自己的单语言或多语言语音数据集，在多张显卡上微调 [Omnilingual ASR](https://github.com/facebookresearch/omnilingual-asr)（常简称 omniASR）模型。
 
+使用 `git clone --recursive https://github.com/EL-CL/omniASR-finetuning.git` 克隆本仓库以下载仓库中的子模块。
+
 ## 1. 准备 Omnilingual ASR 模型
 
 ### 1.1 配置环境
@@ -238,7 +240,7 @@ TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --np
 
 执行 `python -m fairseq2.assets list --kind model` 看该模型卡片的路径配置是否正确，能够列出。
 
-### 4.3 使用
+### 4.3 本地使用
 
 见 1.4 示例。如果在 2.3 使用了 `char_substitution.tsv`，那么别忘了替换回来：
 
@@ -254,6 +256,10 @@ with open(char_substitution_path, 'r', encoding='utf-8') as f:
 for t in transcriptions:
     t = ''.join([char_substitution.get(c, c) for c in t])
 ```
+
+### 4.4 在 Docker 部署
+
+可参考 IPA-Transcribe v4 的[部署说明](https://github.com/EL-CL/IPA-Transcribe#deploy-in-docker-1)和 [Dockerfile](https://github.com/EL-CL/IPA-Transcribe/blob/main/v4.Dockerfile)。
 
 ## 5. 用测试集评估模型
 
