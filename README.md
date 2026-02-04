@@ -95,7 +95,7 @@ Omnilingual ASR 的 tokenizer 以字符为 token，它已经很大（`omniASR_to
 - `dev_size` 和 `test_size`：对于大规模数据集来说，验证集和测试集可各取总数据集的 1%；对于小规模数据集来说，可适当提高验证集的大小；如果确定不需要测试集（不需要最终评估），可以将 `test_size` 设为 0
 - `num_audios_per_shard`：每个分片包含的音频数量，可根据平均音频长度来调整。例如国际音标数据集 `ipa_250506` 多数音频为 12 s，即 12 s × 16000 Hz × 16 bit = 3072000 bit = 384000 B = 375 KB 大小，希望每个分片为 2 GB 左右，那么每个分配将包含 2 GB / 375 KB ≈ 6000 个文件
 
-运行开头会打印训练集、验证集和测试集的音频数量，训练集的音频数量在下面 3.1.3 的训练参数计算中会用到。
+运行开头会打印训练集、验证集和测试集的音频数量，并且会将拆分后三者的元数据保存。训练集的音频数量在下面 3.1.3 的训练参数计算中会用到，拆分后的元数据在下面 5.2 的手动评估中会用到。
 
 在运行时会出现 ray 的 warning，不用管。
 
@@ -201,10 +201,10 @@ mkdir /mnt/all_ssd/tmp/torch
 # 需切到 omnilingual-asr/ 下执行
 cd omnilingual-asr
 
-# 单张显卡训练的配置
+# 单张显卡训练
 TMPDIR=/mnt/all_ssd/tmp/torch python -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
 
-# 8 张显卡训练的配置
+# 8 张显卡训练
 TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node=8 -m workflows.recipes.wav2vec2.asr ../ft_records --config-file ../recipes/ipa_250506_260120.yaml
 ```
 
@@ -263,4 +263,20 @@ for t in transcriptions:
 
 ## 5. 用测试集评估模型
 
-待补充。
+### 5.1 自动评估
+
+评估的配置文件例子见 `recipes/ipa_250506_260120_eval.yaml`。
+
+```bash
+cd omnilingual-asr
+
+# 单张显卡评估
+TMPDIR=/mnt/all_ssd/tmp/torch python -m workflows.recipes.wav2vec2.asr.eval ../ft_records --config-file ../recipes/ipa_250506_260120_eval.yaml
+
+# 8 张显卡评估
+TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node=8 -m workflows.recipes.wav2vec2.asr.eval ../ft_records --config-file ../recipes/ipa_250506_260120_eval.yaml
+```
+
+### 5.2 手动评估
+
+如果想查看每条音频的错误率，可运行 `eval_by_audio.py`。运行前需安装 `pip install levenshtein`。

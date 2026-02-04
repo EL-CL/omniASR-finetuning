@@ -121,7 +121,15 @@ with open(metadata_path, 'r', encoding='utf-8') as f:
 datasets = metadata_to_hf(paths, texts)
 for split, dataset in datasets.items():
     print(f'{split}: {len(dataset)} samples')
-print()
+    metadata_output_path = metadata_path.split('.', 1)
+    metadata_output_path = '.'.join([
+        metadata_output_path[0], split, metadata_output_path[1],
+    ])
+    with open(metadata_output_path, 'w', encoding='utf-8') as f:
+        for path, text in zip(dataset['path'], dataset['text']):
+            f.write(f'{path}\t{text}\n')
+    print(f'Metadata saved to {metadata_output_path}')
+    print()
 
 
 ray.init()

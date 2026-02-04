@@ -1,0 +1,25 @@
+model:
+  name: "ipa_250506_260120"
+tokenizer:
+  name: "omniASR_tokenizer_written_v2"
+
+dataset:
+  name: "ipa_250506"
+  valid_split: "test"
+  storage_mode: "MIXTURE_PARQUET"
+  task_mode: "ASR"
+  mixture_parquet_storage_config:
+    dataset_summary_path: "../datasets/ipa_250506_stats.tsv"
+    beta_corpus: 0.5
+    beta_language: 0.5
+    fragment_loading:
+      cache: True
+      num_parallel_fragments: 2
+      nb_prefetch: 2
+  asr_task_config:
+     min_audio_len: 16000
+     max_audio_len: 200000
+     max_num_elements: 1600000
+     batch_shuffle_window: 1
+     normalize_audio: true
+     example_shuffle_window: 1
