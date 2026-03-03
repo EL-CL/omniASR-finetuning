@@ -245,6 +245,7 @@ TMPDIR=/mnt/all_ssd/tmp/torch CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --np
 见 1.4 示例。如果在 2.3 使用了 `char_substitution.tsv`，那么别忘了替换回来：
 
 ```python
+char_substitution_path = ...
 char_substitution = {}
 with open(char_substitution_path, 'r', encoding='utf-8') as f:
     for line in f:
@@ -253,8 +254,8 @@ with open(char_substitution_path, 'r', encoding='utf-8') as f:
 
 # transcriptions = pipeline.transcribe(...)
 
-for t in transcriptions:
-    t = ''.join([char_substitution.get(c, c) for c in t])
+transcriptions = [''.join([char_substitution.get(c, c) for c in t])
+                  for t in transcriptions]
 ```
 
 ### 4.4 在 Docker 部署
