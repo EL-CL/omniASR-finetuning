@@ -26,7 +26,7 @@ pip install omnilingual-asr[data] sentencepiece tensorboard
 
 ### 1.2 选择预训练模型
 
-Omnilingual ASR 预训练模型的完整列表见[这里](https://github.com/facebookresearch/omnilingual-asr/tree/main#model-architectures)，其中包含 W2V（仅提取声学特征）、CTC（普通的 ASR）和 LLM（ASR + LLM 文本纠错）3 类，以及它们对应的 tokenizer。对于国际音标、满语 ASR 任务来说，以 CTC 模型为起点微调即可，以下以 `omniASR_LLM_1B_v2` + `omniASR_tokenizer_written_v2` 为例。
+Omnilingual ASR 预训练模型的完整列表见[这里](https://github.com/facebookresearch/omnilingual-asr/tree/main#model-architectures)，其中包含 W2V（仅提取声学特征）、CTC（现在 Conformer 框架常用 decoder）和 LLM（更大的 Transformer decoder）3 类，以及它们对应的 tokenizer。目前只对国际音标 ASR 任务尝试过以 CTC 模型为起点微调，以下以 `omniASR_LLM_1B_v2` + `omniASR_tokenizer_written_v2` 为例。
 
 ### 1.3 准备预训练模型
 
