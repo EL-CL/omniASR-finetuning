@@ -32,7 +32,7 @@ Omnilingual ASR 预训练模型的完整列表见[这里](https://github.com/fac
 
 fairseq2 框架通常根据 Hugging Face 模型卡片（model card）名来加载模型，而不是根据模型文件路径。在运行 Omnilingual ASR 时，它会根据你选择的模型卡片名来自动下载模型文件到本地的用户文件夹 `~/.cache/fairseq2/assets/` 下，但是在服务器上这样做很耗时且不稳定，所以最好自行准备模型文件。
 
-通常可能用到的预训练模型文件已上传到服务器，在 `/mnt/all_hdd/slow/data/王天恒/omniASR-finetuning/datasets/` 下，我们只需要把模型文件复制到 fairseq2 本地储存模型文件的路径即可。运行 `get_model_path.py` 以获得各模型储存路径（如需其他模型，请自行在 `get_model_path.py` 中添加模型卡的名字即可）。例如：
+通常可能用到的预训练模型文件已上传到服务器，在笔者的工作文件夹的 `omniASR-finetuning/datasets/` 下，我们只需要把模型文件复制到 fairseq2 本地储存模型文件的路径即可。运行 `get_model_path.py` 以获得各模型储存路径（如需其他模型，请自行在 `get_model_path.py` 中添加模型卡的名字即可）。例如：
 
 ```log
 Model card:   omniASR_CTC_1B_v2
@@ -48,10 +48,10 @@ Local folder: ~/.cache/fairseq2/assets/e7be1a6acb8f76fdbca19dce/
 
 ```bash
 mkdir ~/.cache/fairseq2/assets/fca49af82b51089226da7de9/
-cp /mnt/all_hdd/slow/data/王天恒/omniASR-finetuning/models/omniASR-CTC-1B-v2.pt ~/.cache/fairseq2/assets/fca49af82b51089226da7de9/
+cp omniASR-finetuning/models/omniASR-CTC-1B-v2.pt ~/.cache/fairseq2/assets/fca49af82b51089226da7de9/
 
 mkdir ~/.cache/fairseq2/assets/e7be1a6acb8f76fdbca19dce/
-cp /mnt/all_hdd/slow/data/王天恒/omniASR-finetuning/models/omniASR_tokenizer_written_v2.model ~/.cache/fairseq2/assets/e7be1a6acb8f76fdbca19dce/
+cp omniASR-finetuning/models/omniASR_tokenizer_written_v2.model ~/.cache/fairseq2/assets/e7be1a6acb8f76fdbca19dce/
 ```
 
 ### 1.4 试用
